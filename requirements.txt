@@ -1,0 +1,7 @@
+starlette
+uvicorn
+Jinja2
+Pillow
+python-multipart
+itsdangerous
+httptools

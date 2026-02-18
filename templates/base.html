@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AgenticEdge Blog{% endblock %}</title>
+    {% block og_meta %}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="AgenticEdge">
+    <meta property="og:title" content="AgenticEdge Blog">
+    <meta property="og:description" content="Insights and tutorials from Robert Ehteshamzadeh">
+    <meta property="og:url" content="https://agenticedge.us/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="AgenticEdge Blog">
+    <meta name="twitter:description" content="Insights and tutorials from Robert Ehteshamzadeh">
+    {% endblock %}
+    <link rel="stylesheet" href="/static/style.css?v={{ v }}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="/" class="logo">AgenticEdge</a>
+            <nav class="header-nav">
+                <a href="/">Home</a>
+                <a href="/" class="active">Blog</a>
+                {% if user %}
+                    <span class="nav-user">{{ user.display_name }}</span>
+                    <a href="/logout">Logout</a>
+                    <a href="/new" class="btn-new-item">New Item</a>
+                {% else %}
+                    <a href="/login">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <p>&copy; 2026 AgenticEdge Blog. Built with Starlette.</p>
+        </div>
+    </footer>
+
+    <script src="/static/blog.js?v={{ v }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

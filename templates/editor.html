@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{% if post and post.slug is defined %}Edit Post{% else %}New Post{% endif %} — AgenticEdge Blog{% endblock %}
+
+{% block content %}
+<section class="editor-section">
+    <div class="editor-card">
+        <h1>{% if post and post.slug is defined %}Edit Post{% else %}New Post{% endif %}</h1>
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST"
+              action="{% if post and post.slug is defined %}/edit/{{ post.slug }}{% else %}/new{% endif %}"
+              enctype="multipart/form-data"
+              class="editor-form">
+
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title"
+                       value="{{ post.title if post else '' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">Tags <span class="form-optional">(space-separated)</span></label>
+                <input type="text" id="tags" name="tags"
+                       value="{{ post.tags | join(' ') if post and post.tags is defined and post.tags is iterable and post.tags is not string else (post.tags if post and post.tags is defined and post.tags is string else '') }}"
+                       placeholder="e.g. Engineering How-tos Opinion">
+            </div>
+
+            <div class="form-group">
+                <label>Hero Image</label>
+                <div class="image-upload-area" id="image-upload-area">
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <div class="paste-zone" id="paste-zone">
+                        <p>Or paste an image from clipboard (Ctrl+V)</p>
+                    </div>
+                    <div class="image-preview" id="image-preview">
+                        {% if post and post.image is defined and post.image %}
+                        <img src="/uploads/{{ post.image }}" alt="Current hero image" id="preview-img">
+                        <p class="form-help">Current image (choose file or paste to replace)</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="teaser">Teaser <span class="form-optional">(optional — auto-generated from body if blank)</span></label>
+                <textarea id="teaser" name="teaser" rows="2">{{ post.teaser if post else '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="body">Body</label>
+                <textarea id="body" name="body" rows="16" required>{{ post.body if post else '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="youtube_url">YouTube Link <span class="form-optional">(optional)</span></label>
+                <input type="url" id="youtube_url" name="youtube_url"
+                       value="{{ post.youtube_url if post and post.youtube_url is defined else '' }}"
+                       placeholder="https://www.youtube.com/watch?v=...">
+            </div>
+
+            <div class="form-group">
+                <label for="github_url">GitHub Link <span class="form-optional">(optional)</span></label>
+                <input type="url" id="github_url" name="github_url"
+                       value="{{ post.github_url if post and post.github_url is defined else '' }}"
+                       placeholder="https://github.com/...">
+            </div>
+
+            <div class="form-group">
+                <label for="huggingface_url">Hugging Face Link <span class="form-optional">(optional)</span></label>
+                <input type="url" id="huggingface_url" name="huggingface_url"
+                       value="{{ post.huggingface_url if post and post.huggingface_url is defined else '' }}"
+                       placeholder="https://huggingface.co/...">
+            </div>
+
+            <div class="form-group">
+                <label for="twitter_url">X / Twitter Link <span class="form-optional">(optional)</span></label>
+                <input type="url" id="twitter_url" name="twitter_url"
+                       value="{{ post.twitter_url if post and post.twitter_url is defined else '' }}"
+                       placeholder="https://x.com/...">
+            </div>
+
+            <div class="form-group">
+                <label for="arxiv_url">ArXiv Link <span class="form-optional">(optional)</span></label>
+                <input type="url" id="arxiv_url" name="arxiv_url"
+                       value="{{ post.arxiv_url if post and post.arxiv_url is defined else '' }}"
+                       placeholder="https://arxiv.org/abs/...">
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
+                    {% if post and post.slug is defined %}Save Changes{% else %}Publish{% endif %}
+                </button>
+                <a href="{% if post and post.slug is defined %}/post/{{ post.slug }}{% else %}/{% endif %}"
+                   class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

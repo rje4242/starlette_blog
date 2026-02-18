@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}AgenticEdge Blog{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-inner">
+        <h1>THE AGENTICEDGE BLOG</h1>
+        <p class="hero-subtitle">Insights and tutorials from Robert Ehteshamzadeh</p>
+    </div>
+</section>
+
+<section class="tag-filter">
+    <div class="tag-filter-inner">
+        <a href="/" class="tag-pill {% if not active_tag %}active{% endif %}">All</a>
+        {% for tag in all_tags %}
+            <a href="/?tag={{ tag }}" class="tag-pill {% if active_tag == tag %}active{% endif %}">{{ tag }}</a>
+        {% endfor %}
+    </div>
+</section>
+
+{% if featured %}
+<section class="featured-section">
+    <div class="featured-card">
+        {% if featured.image %}
+        <div class="featured-image">
+            <img src="/uploads/{{ featured.image }}" alt="{{ featured.title }}">
+        </div>
+        {% endif %}
+        <div class="featured-content">
+            <div class="tag-badges">
+                {% for t in featured.get("tags", []) %}<span class="tag-badge">{{ t }}</span> {% endfor %}
+            </div>
+            <h2><a href="/post/{{ featured.slug }}">{{ featured.title }}</a></h2>
+            <p class="featured-teaser">{{ featured.teaser }}</p>
+            <div class="post-meta">
+                <span class="meta-author">{{ featured.author }}</span>
+                <span class="meta-sep">&middot;</span>
+                <span class="meta-date">{{ featured.created[:10] }}</span>
+                <span class="meta-sep">&middot;</span>
+                <span class="meta-read">{{ featured.read_time }} min read</span>
+            </div>
+            {% if user %}
+            <div class="post-actions">
+                <a href="/edit/{{ featured.slug }}" class="btn-edit">Edit</a>
+                <form method="POST" action="/delete/{{ featured.slug }}" class="inline-form delete-form">
+                    <button type="submit" class="btn-delete">Delete</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if posts %}
+<section class="grid-section">
+    <div class="post-grid">
+        {% for post in posts %}
+        <article class="post-card">
+            {% if post.image %}
+            <div class="card-image">
+                <a href="/post/{{ post.slug }}">
+                    <img src="/uploads/{{ post.image }}" alt="{{ post.title }}">
+                </a>
+            </div>
+            {% endif %}
+            <div class="card-content">
+                <div class="tag-badges">
+                    {% for t in post.get("tags", []) %}<span class="tag-badge">{{ t }}</span> {% endfor %}
+                </div>
+                <h3><a href="/post/{{ post.slug }}">{{ post.title }}</a></h3>
+                <p class="card-teaser">{{ post.teaser }}</p>
+                <div class="post-meta">
+                    <span class="meta-author">{{ post.author }}</span>
+                    <span class="meta-sep">&middot;</span>
+                    <span class="meta-date">{{ post.created[:10] }}</span>
+                    <span class="meta-sep">&middot;</span>
+                    <span class="meta-read">{{ post.read_time }} min read</span>
+                </div>
+                {% if user %}
+                <div class="post-actions">
+                    <a href="/edit/{{ post.slug }}" class="btn-edit">Edit</a>
+                    <form method="POST" action="/delete/{{ post.slug }}" class="inline-form delete-form">
+                        <button type="submit" class="btn-delete">Delete</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if not featured and not posts %}
+<section class="empty-section">
+    <div class="empty-inner">
+        <h2>No posts yet</h2>
+        <p>Run <code>python generate_samples.py</code> to create sample posts, or
+        {% if user %}<a href="/new">create a new post</a>{% else %}<a href="/login">log in</a> to start writing{% endif %}.</p>
+    </div>
+</section>
+{% endif %}
+{% endblock %}

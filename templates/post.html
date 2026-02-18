@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} — AgenticEdge Blog{% endblock %}
+
+{% block og_meta %}
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="AgenticEdge">
+<meta property="og:title" content="{{ post.title }}">
+<meta property="og:description" content="{{ post.teaser }}">
+<meta property="og:url" content="https://agenticedge.us/post/{{ post.slug }}">
+{% if post.image %}
+<meta property="og:image" content="https://agenticedge.us/uploads/{{ post.image }}">
+<meta name="twitter:card" content="summary_large_image">
+{% else %}
+<meta name="twitter:card" content="summary">
+{% endif %}
+<meta name="twitter:title" content="{{ post.title }}">
+<meta name="twitter:description" content="{{ post.teaser }}">
+{% if post.image %}
+<meta name="twitter:image" content="https://agenticedge.us/uploads/{{ post.image }}">
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<article class="post-full">
+    {% if post.image %}
+    <div class="post-hero-image">
+        <img src="/uploads/{{ post.image }}" alt="{{ post.title }}">
+    </div>
+    {% endif %}
+
+    <div class="post-full-inner">
+        <div class="post-header">
+            <div class="tag-badges">
+                {% for t in post.get("tags", []) %}<span class="tag-badge">{{ t }}</span> {% endfor %}
+            </div>
+            <h1>{{ post.title }}</h1>
+            <div class="post-meta">
+                <span class="meta-author">{{ post.author }}</span>
+                <span class="meta-sep">&middot;</span>
+                <span class="meta-date">{{ post.created[:10] }}</span>
+                <span class="meta-sep">&middot;</span>
+                <span class="meta-read">{{ post.read_time }} min read</span>
+            </div>
+        </div>
+
+        <div class="post-body">
+            {{ post.body | replace('\n\n', '</p><p>') | replace('\n', '<br>') | safe }}
+        </div>
+
+        {% set has_links = (post.youtube_url is defined and post.youtube_url) or (post.github_url is defined and post.github_url) or (post.huggingface_url is defined and post.huggingface_url) or (post.twitter_url is defined and post.twitter_url) or (post.arxiv_url is defined and post.arxiv_url) %}
+        {% if has_links %}
+        <div class="post-links">
+            <h3>Links</h3>
+            <div class="link-rows">
+                {% if post.youtube_url is defined and post.youtube_url %}
+                {% set yt_thumb = post.youtube_url | youtube_thumb %}
+                <div class="link-row link-row-youtube">
+                    {% if yt_thumb %}
+                    <a href="{{ post.youtube_url }}" target="_blank" rel="noopener" class="link-thumb">
+                        <img src="{{ yt_thumb }}" alt="YouTube thumbnail">
+                        <span class="play-overlay">
+                            <svg viewBox="0 0 24 24" width="32" height="32" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+                        </span>
+                    </a>
+                    {% endif %}
+                    <div class="link-row-details">
+                        <span class="link-icon link-icon-youtube">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                        </span>
+                        <a href="{{ post.youtube_url }}" target="_blank" rel="noopener" class="link-url">{{ post.youtube_url }}</a>
+                        <button type="button" class="btn-copy" data-url="{{ post.youtube_url }}" title="Copy URL">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+                {% if post.github_url is defined and post.github_url %}
+                <div class="link-row">
+                    <span class="link-icon link-icon-github">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                    </span>
+                    <a href="{{ post.github_url }}" target="_blank" rel="noopener" class="link-url">{{ post.github_url }}</a>
+                    <button type="button" class="btn-copy" data-url="{{ post.github_url }}" title="Copy URL">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                </div>
+                {% endif %}
+                {% if post.huggingface_url is defined and post.huggingface_url %}
+                <div class="link-row">
+                    <span class="link-icon link-icon-huggingface">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm-.5 5.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm5 0a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM7.5 9c.83 0 1.5.67 1.5 1.5S8.33 12 7.5 12 6 11.33 6 10.5 6.67 9 7.5 9zm9 0c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zM12 18.5c-3.5 0-6-2.5-6-5h2c0 1.5 1.5 3 4 3s4-1.5 4-3h2c0 2.5-2.5 5-6 5z"/></svg>
+                    </span>
+                    <a href="{{ post.huggingface_url }}" target="_blank" rel="noopener" class="link-url">{{ post.huggingface_url }}</a>
+                    <button type="button" class="btn-copy" data-url="{{ post.huggingface_url }}" title="Copy URL">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                </div>
+                {% endif %}
+                {% if post.twitter_url is defined and post.twitter_url %}
+                <div class="link-row">
+                    <span class="link-icon link-icon-twitter">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </span>
+                    <a href="{{ post.twitter_url }}" target="_blank" rel="noopener" class="link-url">{{ post.twitter_url }}</a>
+                    <button type="button" class="btn-copy" data-url="{{ post.twitter_url }}" title="Copy URL">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                </div>
+                {% endif %}
+                {% if post.arxiv_url is defined and post.arxiv_url %}
+                <div class="link-row">
+                    <span class="link-icon link-icon-arxiv">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M4 2h10l6 6v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm9 1.5V8h4.5L13 3.5zM7 13h10v2H7v-2zm0 4h7v2H7v-2zm0-8h4v2H7V9z"/></svg>
+                    </span>
+                    <a href="{{ post.arxiv_url }}" target="_blank" rel="noopener" class="link-url">{{ post.arxiv_url }}</a>
+                    <button type="button" class="btn-copy" data-url="{{ post.arxiv_url }}" title="Copy URL">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if user %}
+        <div class="post-actions post-actions-full">
+            <a href="/edit/{{ post.slug }}" class="btn-edit">Edit</a>
+            <form method="POST" action="/delete/{{ post.slug }}" class="inline-form delete-form">
+                <button type="submit" class="btn-delete">Delete</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <div class="post-back">
+            <a href="/">&larr; Back to all posts</a>
+        </div>
+    </div>
+</article>
+{% endblock %}
